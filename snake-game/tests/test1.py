@@ -85,7 +85,6 @@ while running:
 
     borda
     snake
-    # Desenha a snake (por enquanto só um quadrado)
     fruit
 
     pygame.display.update() 
