@@ -6,13 +6,24 @@ screen = pygame.display.set_mode((800, 600))
 
 cellSize = 20
 
+fruitSize = 15
+
 #Calculei quantas células cabem na tela
 # 800 / 20 = 40 células na horizontal
 # 600 / 20 = 30 células na vertical
 cols = 800 // cellSize  # 40
 rows = 600 // cellSize  # 30
+
+offset = (cellSize - fruitSize) // 2  # (20 - 15) / 2 = 2.5
+
 food_col = random.randint(1, cols - 2)  # evita a borda (0 e cols-1)
 food_row = random.randint(1, rows - 2)  # evita a borda (0 e rows-1)
+
+cell_x = food_col * cellSize
+cell_y = food_row * cellSize
+
+fruit_x = cell_x + offset
+fruit_y = cell_y + offset
 
 clock = pygame.time.Clock()
 move_delay_ms = 150     # 150 ms por passo (ajusta a gosto)
@@ -81,7 +92,7 @@ while running:
 
     borda = pygame.draw.rect(screen, "black", [0, 0, 800, 600], 6)  # borda preta ao redor da tela
     snake = pygame.draw.rect(screen, "blue", [lead_x, lead_y, 20, 20]),
-    fruit = pygame.draw.rect(screen, "red", [0, 0, 15, 15])
+    fruit = pygame.draw.rect(screen, "red", [fruit_x, fruit_y, fruitSize, fruitSize])
 
     borda
     snake
