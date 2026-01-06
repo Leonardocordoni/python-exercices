@@ -31,8 +31,9 @@ last_move_time = 0      # começa parado
 direction = (0, 0)      # ou (0, 0) se quiser parada até apertar tecla
 running = True
 
-lead_x = 380
-lead_y = 280
+snake_body = [(19, 14)]
+#lead_x = 380
+#lead_y = 280
 
 
 while running:
@@ -68,12 +69,15 @@ while running:
     ## UPDATE
     current_time = pygame.time.get_ticks()
     if current_time - last_move_time >= move_delay_ms:
-        lead_x += direction[0] * cellSize
-        lead_y += direction[1] * cellSize
+        head_col, head_row = snake_body[0]
+        new_head = (head_col + direction[0], head_row + direction[1])
+        snake_body.insert(0, new_head)
+        #snake_body[0][0] += direction[0] * cellSize
+        #snake_body[0][1] += direction[1] * cellSize
         last_move_time = current_time  # IMPORTANTE: atualiza o timer
 
-        head_col = lead_x // cellSize  # 0..39
-        head_row = lead_y // cellSize  # 0..29
+        #head_col = snake_body[0][0] // cellSize  # 0..39
+        #head_row = snake_body[0][1] // cellSize  # 0..29
 
         if head_col == 0 or head_col == cols - 1 or head_row == 0 or head_row == rows - 1: # colisao com borda
             running = False
@@ -91,12 +95,17 @@ while running:
             pygame.draw.rect(screen, color, rect)
 
     borda = pygame.draw.rect(screen, "black", [0, 0, 800, 600], 6)  # borda preta ao redor da tela
-    snake = pygame.draw.rect(screen, "blue", [lead_x, lead_y, 20, 20]),
+    #snake = pygame.draw.rect(screen, "blue", [snake_body[0][0], snake_body[0][1], 20, 20]),
     fruit = pygame.draw.rect(screen, "red", [fruit_x, fruit_y, fruitSize, fruitSize])
 
     borda
-    snake
     fruit
+    
+    for segment in snake_body:
+        seg_col, seg_row = segment
+        seg_x = seg_col * cellSize
+        seg_y = seg_row * cellSize
+        pygame.draw.rect(screen, "blue", [seg_x, seg_y, cellSize, cellSize])
 
     pygame.display.update() 
     clock.tick(60)
