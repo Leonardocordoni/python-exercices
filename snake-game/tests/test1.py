@@ -31,7 +31,12 @@ last_move_time = 0      # começa parado
 direction = (0, 0)      # ou (0, 0) se quiser parada até apertar tecla
 running = True
 
-snake_body = [(19, 14)]
+snake_body = [
+    (19, 14),  # cabeça
+    (19, 14),  # corpo 1 (mesma posição)
+    (19, 14),  # corpo 2 (mesma posição)
+    (19, 14),  # cauda (mesma posição)
+]
 #lead_x = 380
 #lead_y = 280
 
@@ -72,6 +77,7 @@ while running:
         head_col, head_row = snake_body[0]
         new_head = (head_col + direction[0], head_row + direction[1])
         snake_body.insert(0, new_head)
+        snake_body.pop()  # remove a cauda
         #snake_body[0][0] += direction[0] * cellSize
         #snake_body[0][1] += direction[1] * cellSize
         last_move_time = current_time  # IMPORTANTE: atualiza o timer
