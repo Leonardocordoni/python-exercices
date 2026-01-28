@@ -74,19 +74,39 @@ while running:
     ## UPDATE
     current_time = pygame.time.get_ticks()
     if current_time - last_move_time >= move_delay_ms:
+        # mover a cobra
         head_col, head_row = snake_body[0]
         new_head = (head_col + direction[0], head_row + direction[1])
         snake_body.insert(0, new_head)
-        snake_body.pop()  # remove a cauda
-        #snake_body[0][0] += direction[0] * cellSize
-        #snake_body[0][1] += direction[1] * cellSize
+
         last_move_time = current_time  # IMPORTANTE: atualiza o timer
 
-        #head_col = snake_body[0][0] // cellSize  # 0..39
-        #head_row = snake_body[0][1] // cellSize  # 0..29
-
+        #colisao com borda
+        head_col, head_row = snake_body[0]
         if head_col == 0 or head_col == cols - 1 or head_row == 0 or head_row == rows - 1: # colisao com borda
             running = False
+        
+        #colisao com fruta
+        ate_fruit = (snake_body[0] == (food_col, food_row))
+
+        if ate_fruit:
+            # Gera nova fruta
+            while True:
+                food_col = random.randint(1, cols - 2)
+                food_row = random.randint(1, rows - 2)
+                
+                if (food_col, food_row) not in snake_body:
+                    break
+            
+            # Recalcula posição em pixel da fruta
+            cell_x = food_col * cellSize
+            cell_y = food_row * cellSize
+            fruit_x = cell_x + offset
+            fruit_y = cell_y + offset
+
+        # 4. Crescimento (só remove cauda se NÃO comeu fruta)
+        if not ate_fruit:
+            snake_body.pop()
 
     #Desenho do fundo xadrez direto na tela, não em Surface separada
     for x in range(cols):  # de 0 até 39
