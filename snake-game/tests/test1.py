@@ -29,6 +29,7 @@ clock = pygame.time.Clock()
 move_delay_ms = 150     # 150 ms por passo (ajusta a gosto)
 last_move_time = 0      # começa parado
 direction = (0, 0)      # ou (0, 0) se quiser parada até apertar tecla
+next_direction = (0, 0)
 running = True
 
 snake_body = [
@@ -51,22 +52,22 @@ while running:
                 if event.key in (pygame.K_UP, pygame.K_w):
                     # só aceita se NÃO está indo pra baixo
                     if direction != (0, 1):
-                        direction = (0, -1)
+                        next_direction = (0, -1)
 
                 # baixo (S ou seta pra baixo)
                 elif event.key in (pygame.K_DOWN, pygame.K_s):
                     if direction != (0, -1):
-                        direction = (0, 1)
+                        next_direction = (0, 1)
 
                 # esquerda (A ou seta esquerda)
                 elif event.key in (pygame.K_LEFT, pygame.K_a):
                     if direction != (1, 0):
-                        direction = (-1, 0)
+                        next_direction = (-1, 0)
 
                 # direita (D ou seta direita)
                 elif event.key in (pygame.K_RIGHT, pygame.K_d):
                     if direction != (-1, 0):
-                        direction = (1, 0)
+                        next_direction = (1, 0)
                 
 
     # aqui NÃO mexe em direção, só usa
@@ -74,6 +75,7 @@ while running:
     ## UPDATE
     current_time = pygame.time.get_ticks()
     if current_time - last_move_time >= move_delay_ms:
+        direction = next_direction
         # mover a cobra
         head_col, head_row = snake_body[0]
         new_head = (head_col + direction[0], head_row + direction[1])
