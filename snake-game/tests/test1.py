@@ -41,6 +41,15 @@ snake_body = [
 #lead_x = 380
 #lead_y = 280
 
+# 1. Estado inicial
+game_state = "START" 
+
+# 2. Fontes (None usa a padrão do sistema)
+font_grande = pygame.font.Font(None, 80)
+font_pequena = pygame.font.Font(None, 36)
+
+# 3. High Score (começa em 0)
+high_score = 0
 
 while running:
     for event in pygame.event.get():
