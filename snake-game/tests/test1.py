@@ -108,8 +108,9 @@ while running:
         if not ate_fruit:
             snake_body.pop()
             
-        if snake_body[0] in snake_body[1:]:
-            running = False
+        if direction != (0, 0): # SÓ CHECA SE ESTIVER EM MOVIMENTO
+            if snake_body[0] in snake_body[1:]:
+                running = False
 
     #Desenho do fundo xadrez direto na tela, não em Surface separada
     for x in range(cols):  # de 0 até 39
