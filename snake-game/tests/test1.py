@@ -55,6 +55,18 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+            
+        # Se estivermos no START, precisamos de um jeito de sair dele
+        if game_state == "START":
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN: # Apertou ENTER
+                    game_state = "PLAYING"
+        
+        # Se estivermos jogando, as setas funcionam
+        elif game_state == "PLAYING":
+            if event.type == pygame.KEYDOWN:
+                # COLOQUE AQUI o seu bloco de if/elif das setas (W, A, S, D)
+                pass # (apague esse pass quando colar as setas)
 
         if event.type == pygame.KEYDOWN:
                 # cima (W ou seta pra cima)
@@ -83,70 +95,80 @@ while running:
     # só move quando passar tempo suficiente
     ## UPDATE
     current_time = pygame.time.get_ticks()
-    if current_time - last_move_time >= move_delay_ms:
-        direction = next_direction
-        # mover a cobra
-        head_col, head_row = snake_body[0]
-        new_head = (head_col + direction[0], head_row + direction[1])
-        snake_body.insert(0, new_head)
+    if game_state == "PLAYING":
+        if current_time - last_move_time >= move_delay_ms:
+            direction = next_direction
+            # mover a cobra
+            head_col, head_row = snake_body[0]
+            new_head = (head_col + direction[0], head_row + direction[1])
+            snake_body.insert(0, new_head)
 
-        last_move_time = current_time  # IMPORTANTE: atualiza o timer
+            last_move_time = current_time  # IMPORTANTE: atualiza o timer
 
-        #colisao com borda
-        head_col, head_row = snake_body[0]
-        if head_col == 0 or head_col == cols - 1 or head_row == 0 or head_row == rows - 1: # colisao com borda
-            running = False
-        
-        #colisao com fruta
-        ate_fruit = (snake_body[0] == (food_col, food_row))
-
-        if ate_fruit:
-            # Gera nova fruta
-            while True:
-                food_col = random.randint(1, cols - 2)
-                food_row = random.randint(1, rows - 2)
-                
-                if (food_col, food_row) not in snake_body:
-                    break
-            
-            # Recalcula posição em pixel da fruta
-            cell_x = food_col * cellSize
-            cell_y = food_row * cellSize
-            fruit_x = cell_x + offset
-            fruit_y = cell_y + offset
-
-        # 4. Crescimento (só remove cauda se NÃO comeu fruta)
-        if not ate_fruit:
-            snake_body.pop()
-            
-        if direction != (0, 0): # SÓ CHECA SE ESTIVER EM MOVIMENTO
-            if snake_body[0] in snake_body[1:]:
+            #colisao com borda
+            head_col, head_row = snake_body[0]
+            if head_col == 0 or head_col == cols - 1 or head_row == 0 or head_row == rows - 1: # colisao com borda
                 running = False
-
-    #Desenho do fundo xadrez direto na tela, não em Surface separada
-    for x in range(cols):  # de 0 até 39
-        for y in range(rows):  # de 0 até 29
-            #Alternância correta do quadriculado
-            if (x + y) % 2 == 0:
-                color = (0,100,0)  # Verde Bem escuro
-            else:
-                color = (0,128,0)  # um acima
             
-            rect = (x * cellSize, y * cellSize, cellSize, cellSize)
-            pygame.draw.rect(screen, color, rect)
+            #colisao com fruta
+            ate_fruit = (snake_body[0] == (food_col, food_row))
 
-    borda = pygame.draw.rect(screen, "black", [0, 0, 800, 600], 6)  # borda preta ao redor da tela
-    #snake = pygame.draw.rect(screen, "blue", [snake_body[0][0], snake_body[0][1], 20, 20]),
-    fruit = pygame.draw.rect(screen, "red", [fruit_x, fruit_y, fruitSize, fruitSize])
+            if ate_fruit:
+                # Gera nova fruta
+                while True:
+                    food_col = random.randint(1, cols - 2)
+                    food_row = random.randint(1, rows - 2)
+                    
+                    if (food_col, food_row) not in snake_body:
+                        break
+                
+                # Recalcula posição em pixel da fruta
+                cell_x = food_col * cellSize
+                cell_y = food_row * cellSize
+                fruit_x = cell_x + offset
+                fruit_y = cell_y + offset
 
-    borda
-    fruit
+            # 4. Crescimento (só remove cauda se NÃO comeu fruta)
+            if not ate_fruit:
+                snake_body.pop()
+                
+            if direction != (0, 0): # SÓ CHECA SE ESTIVER EM MOVIMENTO
+                if snake_body[0] in snake_body[1:]:
+                    running = False
+
+    # 3. Desenho (DRAW)
+    screen.fill((0, 0, 0)) # Limpa a tela antes de desenhar
     
-    for segment in snake_body:
-        seg_col, seg_row = segment
-        seg_x = seg_col * cellSize
-        seg_y = seg_row * cellSize
-        pygame.draw.rect(screen, "blue", [seg_x, seg_y, cellSize, cellSize])
+    if game_state == "START":
+        # Vamos desenhar um texto simples só para testar
+        texto = font_grande.render("PRESS ENTER TO START", True, "white")
+        screen.blit(texto, (100, 250))
+    
+    elif game_state == "PLAYING":    
+        #Desenho do fundo xadrez direto na tela, não em Surface separada
+        for x in range(cols):  # de 0 até 39
+            for y in range(rows):  # de 0 até 29
+                #Alternância correta do quadriculado
+                if (x + y) % 2 == 0:
+                    color = (0,100,0)  # Verde Bem escuro
+                else:
+                    color = (0,128,0)  # um acima
+                
+                rect = (x * cellSize, y * cellSize, cellSize, cellSize)
+                pygame.draw.rect(screen, color, rect)
+
+        borda = pygame.draw.rect(screen, "black", [0, 0, 800, 600], 6)  # borda preta ao redor da tela
+        #snake = pygame.draw.rect(screen, "blue", [snake_body[0][0], snake_body[0][1], 20, 20]),
+        fruit = pygame.draw.rect(screen, "red", [fruit_x, fruit_y, fruitSize, fruitSize])
+
+        borda
+        fruit
+        
+        for segment in snake_body:
+            seg_col, seg_row = segment
+            seg_x = seg_col * cellSize
+            seg_y = seg_row * cellSize
+            pygame.draw.rect(screen, "blue", [seg_x, seg_y, cellSize, cellSize])
 
     pygame.display.update() 
     clock.tick(60)
